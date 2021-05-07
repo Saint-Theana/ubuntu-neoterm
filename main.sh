@@ -4,11 +4,7 @@ if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
 fi
-tarball="ubuntu.tar.gz"
-if [ "$first" != 1 ];then
-	if [ ! -f $tarball ]; then
-		echo "downloading ubuntu-image"
-		case `dpkg --print-architecture` in
+case `dpkg --print-architecture` in
 		aarch64)
 			archurl="arm64" ;;
 		arm)
@@ -22,7 +18,11 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-		wget "https://partner-images.canonical.com/core/bionic/current/ubuntu-bionic-core-cloudimg-${archurl}-root.tar.gz" -O $tarball
+tarball="ubuntu-bionic-core-cloudimg-${archurl}-root.tar.gz"
+if [ "$first" != 1 ];then
+	if [ ! -f $tarball ]; then
+		echo "downloading ubuntu-image"
+		curl -O "https://partner-images.canonical.com/core/bionic/current/ubuntu-bionic-core-cloudimg-${archurl}-root.tar.gz"
 	fi
 	cur=`pwd`
 	mkdir -p "$folder"
@@ -53,8 +53,7 @@ if [ -n "\$(ls -A binds)" ]; then
 fi
 command+=" -b /dev"
 command+=" -b /proc"
-## uncomment the following line to have access to the home directory of 
-termux
+## uncomment the following line to have access to the home directory of termux
 #command+=" -b /data/data/com.termux/files/home:/root"
 ## uncomment the following line to mount /sdcard directly to / 
 #command+=" -b /sdcard"
